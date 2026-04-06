@@ -1,8 +1,8 @@
-#from schemas.schema import User, Basket, Item
+from schemas.schema import User, Basket, Item
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException, APIRouter
 #from data.filehandler import add_user, add_basket, add_item_to_basket, save_json
-#from data.filereader import get_user_by_id, get_basket_by_user_id, get_all_users, get_total_price_of_basket, load_json
+from data.filereader import get_user_by_id, get_basket_by_user_id, get_all_users, get_total_price_of_basket, load_json
 
 '''
 
@@ -40,18 +40,37 @@ def updateitem(userid: int, itemid: int, updateItem):
 def deleteitem(userid: int, itemid: int):
    pass
 
-@routers.get('/user')
-def user(userid: int):
-   pass
+@routers.get('/user',summary="Get an User by user_id",response_model=User) 
+def user(userid: int) -> User:
+   try:
+        user = get_user_by_id(userid)   
+        return JSONResponse(content=user,status_code=200)
+   except ValueError:
+        raise HTTPException(status_code=404,detail="No user with given ID")
 
-@routers.get('/users')
-def users():
-    pass
+@routers.get('/users',summary="Get all the users",response_model=User)
+def users() -> list[User]:
+    try:
+        all_users = get_all_users()
+        return JSONResponse(content=all_users,status_code=200)
+    except ValueError:
+        raise HTTPException(status_code=418,detail="Cannot get the list of Users")
 
-@routers.get('/shoppingbag')
-def shoppingbag(userid: int):
-    pass
+@routers.get('/shoppingbag',summary="Get a basket of an User",response_model=Basket)
+def shoppingbag(userid: int) -> list[Item]:
+    try:
+        basket_of_user = get_basket_by_user_id(userid)
+        return JSONResponse(content=basket_of_user,status_code=200)
+    except ValueError:
+        raise HTTPException(status_code=404,detail="No basket with given ID")
 
-@routers.get('/getusertotal')
+
+@routers.get('/getusertotal',summary="Get the total price of an User")
 def getusertotal(userid: int) -> float:
-    pass
+    try:
+        total_price = get_total_price_of_basket(userid)
+        return JSONResponse(content=total_price,status_code=200)
+    except ValueError:
+        raise HTTPException(status_code=404,detail="No total price with given ID")
+
+    

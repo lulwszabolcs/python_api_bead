@@ -48,16 +48,58 @@ from filereader import (
 JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), "data.json")
 
 def load_json() -> Dict[str, Any]:
-    pass
+    with open(JSON_FILE_PATH,"r",encoding="utf-8") as file:
+        return json.load(file)
 
 def get_user_by_id(user_id: int) -> Dict[str, Any]:
-    pass
+    data = load_json()
+    users = data.get("Users", [])
+    
+    for user in users:
+        if user.get("id") == user_id:
+            return user
+    
+    raise ValueError("Nincs felhasználó ezzel az ID-val!")
+            
+        
 
 def get_basket_by_user_id(user_id: int) -> List[Dict[str, Any]]:
-    pass
+    data = load_json()
+    baskets = data.get("Baskets",[])
+
+    results = []
+    for basket in baskets:
+        if basket.get("user_id") == user_id:
+            results.append(basket)
+        
+    if not results:
+        raise ValueError("Nincs kosar ilyen user_id-val!")
+    
+    return results
+            
 
 def get_all_users() -> List[Dict[str, Any]]:
-    pass
+    data = load_json()
+    users = data.get("Users", [])
+    if not users:
+        raise ValueError("Hiba az összes felhasználó lekérdezésekor!")
+    else:
+        return users
 
 def get_total_price_of_basket(user_id: int) -> float:
-    pass
+    baskets = get_basket_by_user_id(user_id)
+    if not baskets:
+        raise ValueError("Hiba a felhasznalo kosaranak lekerdezesekor!")
+    
+    basket = baskets[0]
+    items = basket.get("items", [])
+    total = 0.0
+
+    for item in items:
+        price = item.get("price", 0.0)
+        quantity = item.get("quantity", 1)
+        total += price * quantity
+    
+    return total
+        
+    
