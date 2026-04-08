@@ -61,16 +61,26 @@ from filehandler import (
 JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), "data.json")
 
 def load_json() -> Dict[str, Any]:
-    pass
+    with open(JSON_FILE_PATH,"r",encoding="utf-8") as file:
+        return json.load(file)
 
 def save_json(data: Dict[str, Any]) -> None:
-    pass
+    with open(JSON_FILE_PATH,"w",encoding="utf-8") as file:
+        return json.dump(data,file)
 
 def add_user(user: Dict[str, Any]) -> None:
-    pass
+    json_data = load_json()
+    json_data.get("Users").append(user)
+    save_json(json_data)
 
 def add_basket(basket: Dict[str, Any]) -> None:
-    pass
+    json_data = load_json()
+    json_data.get("Baskets").append(basket)
+    save_json(json_data)
 
 def add_item_to_basket(user_id: int, item: Dict[str, Any]) -> None:
-    pass
+    json_data = load_json()
+    for basket in json_data.get("Basket"):
+        if (basket.get("user_id") == user_id):
+            basket.get("items").append(item)
+    save_json(json_data)
