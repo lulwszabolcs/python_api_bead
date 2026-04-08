@@ -66,17 +66,17 @@ def load_json() -> Dict[str, Any]:
 
 def save_json(data: Dict[str, Any]) -> None:
     with open(JSON_FILE_PATH,"w",encoding="utf-8") as file:
-        return json.dump(data,file)
-
+        json.dump(data, file, indent=4, ensure_ascii=False)
+        
 def add_user(user: Dict[str, Any]) -> None:
-    json_data = load_json()
-    json_data.get("Users").append(user)
-    save_json(json_data)
+    data = load_json()
+    data["Users"].append(user)
+    save_json(data)
 
 def add_basket(basket: Dict[str, Any]) -> None:
-    json_data = load_json()
-    json_data.get("Baskets").append(basket)
-    save_json(json_data)
+    data = load_json()
+    data["Baskets"].append(basket)
+    save_json(data)
 
 def add_item_to_basket(user_id: int, item: Dict[str, Any]) -> None:
     json_data = load_json()

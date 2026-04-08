@@ -1,7 +1,7 @@
 from schemas.schema import User, Basket, Item
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException, APIRouter
-#from data.filehandler import add_user, add_basket, add_item_to_basket, save_json
+from data.filehandler import add_user, add_basket, add_item_to_basket, save_json
 from data.filereader import get_user_by_id, get_basket_by_user_id, get_all_users, get_total_price_of_basket, load_json
 
 '''
@@ -20,13 +20,18 @@ from data.filereader import get_user_by_id, get_basket_by_user_id, get_all_users
 
 routers = APIRouter()
 
-@routers.post('/adduser')
-def adduser(user):
-    pass
+@routers.post('/adduser',summary="Add a new User",response_model=User)
+def adduser(user: User) -> User:
+    try:
+        userToAdd = user.model_dump()
+        add_user(userToAdd)
+        return JSONResponse(content=userToAdd,status_code=201)
+    except ValueError:
+        raise HTTPException(status_code=404,detail="Error adding a new User")
 
 @routers.post('/addshoppingbag')
 def addshoppingbag(userid: int) -> str:
-    pass
+    ...
 
 @routers.post('/additem')
 def additem(userid: int, item):
