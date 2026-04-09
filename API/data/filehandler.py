@@ -84,3 +84,18 @@ def add_item_to_basket(user_id: int, item: Dict[str, Any]) -> None:
         if (basket.get("user_id") == user_id):
             basket.get("items").append(item)
     save_json(json_data)
+
+def remove_item_from_basket(userid: int, itemid: int):
+    data = load_json()
+    item_deleted = False
+    for basket in data["Baskets"]:
+        if basket["user_id"] == userid:
+            original_count = len(basket["items"])
+            basket["items"] = [item for item in basket["items"] if item["item_id"] != itemid]
+            if len(basket["items"]) < original_count:
+                item_deleted = True
+    if item_deleted:
+        save_json(data)
+    else:
+        raise ValueError("Hiba a torles kozben")
+    

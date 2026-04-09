@@ -1,7 +1,7 @@
 from schemas.schema import User, Basket, Item
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException, APIRouter
-from data.filehandler import add_user, add_basket, add_item_to_basket, save_json
+from data.filehandler import add_user, add_basket, add_item_to_basket, save_json, remove_item_from_basket
 from data.filereader import get_user_by_id, get_basket_by_user_id, get_all_users, get_total_price_of_basket, load_json
 
 '''
@@ -41,9 +41,13 @@ def additem(userid: int, item):
 def updateitem(userid: int, itemid: int, updateItem):
     pass
 
-@routers.delete('/deleteitem')
-def deleteitem(userid: int, itemid: int):
-   pass
+@routers.delete('/deleteitem',summary="Delete an item from an User's basket")
+def deleteitem(userid: int, itemid: int) -> Basket:
+    try:
+       remove_item_from_basket(userid,itemid)
+       return get_basket_by_user_id(userid)[0]
+    except ValueError:
+        raise HTTPException(status_code=404,detail="Error while item delete")
 
 @routers.get('/user',summary="Get an User by user_id",response_model=User) 
 def user(userid: int) -> User:
