@@ -33,9 +33,15 @@ def adduser(user: User) -> User:
 def addshoppingbag(userid: int) -> str:
     ...
 
-@routers.post('/additem')
-def additem(userid: int, item):
-    pass
+@routers.post('/additem',summary="Add item to an User's basket",response_model=Basket)
+def additem(userid: int, item: Item) -> Basket:
+    try:
+        item_to_add = item.model_dump()
+        add_item_to_basket(userid,item_to_add)
+        return JSONResponse(content=get_basket_by_user_id(userid)[0],status_code=200)
+    except:
+        raise HTTPException(status_code=404,detail="Error while adding to basket")
+
 
 @routers.put('/updateitem')
 def updateitem(userid: int, itemid: int, updateItem):
@@ -45,7 +51,7 @@ def updateitem(userid: int, itemid: int, updateItem):
 def deleteitem(userid: int, itemid: int) -> Basket:
     try:
        remove_item_from_basket(userid,itemid)
-       return get_basket_by_user_id(userid)[0]
+       return JSONResponse(content=get_basket_by_user_id(userid)[0],status_code=200)
     except ValueError:
         raise HTTPException(status_code=404,detail="Error while item delete")
 

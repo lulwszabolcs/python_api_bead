@@ -49,6 +49,20 @@
                     "brand": "Vilmos",
                     "price": 12.49,
                     "quantity": 1
+                },
+                {
+                    "item_id": 77,
+                    "name": "Vodka",
+                    "brand": "Royal",
+                    "price": 3999.0,
+                    "quantity": 1
+                },
+                {
+                    "item_id": 5,
+                    "name": "Tej",
+                    "brand": "Milka",
+                    "price": 100.0,
+                    "quantity": 5
                 }
             ]
         },
@@ -69,6 +83,20 @@
                     "brand": "Valencia",
                     "price": 8.49,
                     "quantity": 3
+                },
+                {
+                    "item_id": 5,
+                    "name": "Tej",
+                    "brand": "Milka",
+                    "price": 100.0,
+                    "quantity": 5
+                },
+                {
+                    "item_id": 6,
+                    "name": "Kakao",
+                    "brand": "Milka",
+                    "price": 100.0,
+                    "quantity": 5
                 }
             ]
         },

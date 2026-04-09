@@ -79,11 +79,14 @@ def add_basket(basket: Dict[str, Any]) -> None:
     save_json(data)
 
 def add_item_to_basket(user_id: int, item: Dict[str, Any]) -> None:
-    json_data = load_json()
-    for basket in json_data.get("Basket"):
-        if (basket.get("user_id") == user_id):
+    data = load_json()
+    for basket in data["Baskets"]:
+        if (basket["user_id"] == user_id):
             basket.get("items").append(item)
-    save_json(json_data)
+            save_json(data)
+            return
+    raise ValueError("Hiba a termek kosarba helyezese kozben!")
+        
 
 def remove_item_from_basket(userid: int, itemid: int):
     data = load_json()
@@ -94,6 +97,7 @@ def remove_item_from_basket(userid: int, itemid: int):
             basket["items"] = [item for item in basket["items"] if item["item_id"] != itemid]
             if len(basket["items"]) < original_count:
                 item_deleted = True
+                break
     if item_deleted:
         save_json(data)
     else:
