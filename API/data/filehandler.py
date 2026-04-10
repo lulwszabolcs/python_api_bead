@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Dict, Any
-
+from schemas.schema import Item
 
 '''
 Útmutató a fájl függvényeinek a használatához
@@ -73,9 +73,23 @@ def add_user(user: Dict[str, Any]) -> None:
     data["Users"].append(user)
     save_json(data)
 
-def add_basket(basket: Dict[str, Any]) -> None:
+def get_last_basket_id() -> int:
     data = load_json()
-    data["Baskets"].append(basket)
+    last_basket = data.get("Baskets")[-1]
+    return last_basket["id"]
+         
+
+def add_basket(userid: int) -> None:
+    data = load_json()
+    for basket in data["Baskets"]:
+        if (basket["user_id"] == userid):
+            raise ValueError("Mar van kosara a felhasznaloknak.")
+    new_basket = {
+        "id": get_last_basket_id() + 1,  # Egyedi kosár azonosító
+        "user_id": userid,  # Az a felhasználó, akihez a kosár tartozik
+        "items": []  # Kezdetben üres kosár
+    }
+    data["Baskets"].append(new_basket)
     save_json(data)
 
 def add_item_to_basket(user_id: int, item: Dict[str, Any]) -> None:
@@ -103,3 +117,15 @@ def remove_item_from_basket(userid: int, itemid: int):
     else:
         raise ValueError("Hiba a torles kozben")
     
+def update_item_in_basket(userid: int, itemid: int, updateItem: Item):
+    data = load_json()
+    item_replacement = updateItem.model_dump()
+    for basket in data["Baskets"]:
+        if basket["user_id"] == userid:
+            for item in basket["items"]:
+                if item["item_id"] == itemid:
+                    basket["items"].remove(item)
+                    basket["items"].append(item_replacement)
+                    save_json(data)
+                    return
+    raise ValueError("Hiba a termek frissitese kozben")

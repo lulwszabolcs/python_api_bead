@@ -1,7 +1,7 @@
 from schemas.schema import User, Basket, Item
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException, APIRouter
-from data.filehandler import add_user, add_basket, add_item_to_basket, save_json, remove_item_from_basket
+from data.filehandler import add_user, add_basket, add_item_to_basket, save_json, remove_item_from_basket, update_item_in_basket
 from data.filereader import get_user_by_id, get_basket_by_user_id, get_all_users, get_total_price_of_basket, load_json
 
 '''
@@ -31,7 +31,11 @@ def adduser(user: User) -> User:
 
 @routers.post('/addshoppingbag')
 def addshoppingbag(userid: int) -> str:
-    ...
+    try:
+        add_basket(userid)
+        return JSONResponse(content="Sikeres kosár hozzárendelés!",status_code=200)
+    except ValueError:
+        raise HTTPException(status_code=404,detail="Error while adding new basket")
 
 @routers.post('/additem',summary="Add item to an User's basket",response_model=Basket)
 def additem(userid: int, item: Item) -> Basket:
@@ -44,10 +48,15 @@ def additem(userid: int, item: Item) -> Basket:
 
 
 @routers.put('/updateitem')
-def updateitem(userid: int, itemid: int, updateItem):
-    pass
+def updateitem(userid: int, itemid: int, updateItem: Item) -> Basket:
+    try:
+        update_item_in_basket(userid,itemid,updateItem)
+        return JSONResponse(content=get_basket_by_user_id(userid),status_code=200)
+    except ValueError:
+        raise HTTPException(status_code=404,detail="Error while item update")
 
-@routers.delete('/deleteitem',summary="Delete an item from an User's basket")
+
+@routers.delete('/deleteitem',summary="Delete an item from an User's basket",response_model=Basket)
 def deleteitem(userid: int, itemid: int) -> Basket:
     try:
        remove_item_from_basket(userid,itemid)
