@@ -1,8 +1,9 @@
 from schemas.schema import User, Basket, Item
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException, APIRouter
-from data.filehandler import add_user, add_basket, add_item_to_basket, save_json, remove_item_from_basket, update_item_in_basket
+from data.filehandler import add_user, add_basket, add_item_to_basket, save_json, remove_item_from_basket, update_item_in_basket, save_json_file, load_json_file
 from data.filereader import get_user_by_id, get_basket_by_user_id, get_all_users, get_total_price_of_basket, load_json
+from typing import Dict, Any
 
 '''
 
@@ -29,7 +30,7 @@ def adduser(user: User) -> User:
     except ValueError:
         raise HTTPException(status_code=404,detail="Error adding a new User")
 
-@routers.post('/addshoppingbag')
+@routers.post('/addshoppingbag',summary="Add a shopping bag to an User")
 def addshoppingbag(userid: int) -> str:
     try:
         add_basket(userid)
@@ -47,7 +48,7 @@ def additem(userid: int, item: Item) -> Basket:
         raise HTTPException(status_code=404,detail="Error while adding to basket")
 
 
-@routers.put('/updateitem')
+@routers.put('/updateitem',summary="Update an item in a User's shopping bag")
 def updateitem(userid: int, itemid: int, updateItem: Item) -> Basket:
     try:
         update_item_in_basket(userid,itemid,updateItem)
@@ -88,7 +89,6 @@ def shoppingbag(userid: int) -> list[Item]:
     except ValueError:
         raise HTTPException(status_code=404,detail="No basket with given ID")
 
-
 @routers.get('/getusertotal',summary="Get the total price of an User")
 def getusertotal(userid: int) -> float:
     try:
@@ -96,5 +96,38 @@ def getusertotal(userid: int) -> float:
         return JSONResponse(content=total_price,status_code=200)
     except ValueError:
         raise HTTPException(status_code=404,detail="No total price with given ID")
-
     
+@routers.post('/save')
+def save(source: str, dest: str):
+    try:
+        data: Dict[str, Any] = load_json_file(source)
+        save_json_file(data, dest)
+
+        return JSONResponse(
+            status_code=200,
+            content={
+                "status": "success",
+                "message": f"Adatok sikeresen mentve",
+                "source": source,
+                "dest": dest
+            }
+        )
+    except FileNotFoundError:
+        raise HTTPException(status_code=404,detail=f"A file nem talalhato")
+
+@routers.post('/reload')
+def reload(dest: str, source: str):
+    try:
+        data: Dict[str, Any] = load_json_file(source)
+        save_json_file(data, dest)
+        return JSONResponse(
+            status_code=200,
+            content={
+                "status": "success",
+                "message": f"Adatok sikeresen visszatöltve: {source} → {dest}",
+                "source": source,
+                "dest": dest
+            }
+        )
+    except FileNotFoundError:
+        raise HTTPException(status_code=404,detail=f"A file nem talalhato")

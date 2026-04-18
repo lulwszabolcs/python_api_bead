@@ -58,14 +58,28 @@ from filehandler import (
 
 '''
 
+JSON_DIR = os.path.dirname(__file__)
+
+
 JSON_FILE_PATH = os.path.join(os.path.dirname(__file__), "data.json")
 
 def load_json() -> Dict[str, Any]:
-    with open(JSON_FILE_PATH,"r",encoding="utf-8") as file:
+    with open(JSON_FILE_PATH, "r", encoding="utf-8") as file:
         return json.load(file)
 
 def save_json(data: Dict[str, Any]) -> None:
-    with open(JSON_FILE_PATH,"w",encoding="utf-8") as file:
+    with open(JSON_FILE_PATH, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
+
+def load_json_file(filename: str) -> Dict[str, Any]:
+    file_path = os.path.join(JSON_DIR, filename)
+
+    with open(file_path,"r",encoding="utf-8") as file:
+        return json.load(file)
+
+def save_json_file(data: Dict[str, Any], filename: str) -> None:
+    file_path = os.path.join(JSON_DIR, filename)
+    with open(file_path, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
         
 def add_user(user: Dict[str, Any]) -> None:
@@ -73,19 +87,23 @@ def add_user(user: Dict[str, Any]) -> None:
     data["Users"].append(user)
     save_json(data)
 
-def get_last_basket_id() -> int:
+def _get_last_basket_id() -> int:
     data = load_json()
-    last_basket = data.get("Baskets")[-1]
+    baskets = data.get("Baskets", [])
+    
+    if not baskets:
+        return 0
+    
+    last_basket = baskets[-1]
     return last_basket["id"]
          
-
 def add_basket(userid: int) -> None:
     data = load_json()
     for basket in data["Baskets"]:
         if (basket["user_id"] == userid):
             raise ValueError("Mar van kosara a felhasznaloknak.")
     new_basket = {
-        "id": get_last_basket_id() + 1,  # Egyedi kosár azonosító
+        "id": _get_last_basket_id() + 1,  # Egyedi kosár azonosító
         "user_id": userid,  # Az a felhasználó, akihez a kosár tartozik
         "items": []  # Kezdetben üres kosár
     }
@@ -101,7 +119,6 @@ def add_item_to_basket(user_id: int, item: Dict[str, Any]) -> None:
             return
     raise ValueError("Hiba a termek kosarba helyezese kozben!")
         
-
 def remove_item_from_basket(userid: int, itemid: int):
     data = load_json()
     item_deleted = False

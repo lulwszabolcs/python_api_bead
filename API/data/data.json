@@ -29,6 +29,11 @@
             "id": 66,
             "name": "Nagy Jozsef",
             "email": "atka@example.com"
+        },
+        {
+            "id": 77,
+            "name": "Kertesz Geza",
+            "email": "usesdsadas@example.com"
         }
     ],
     "Baskets": [
@@ -85,18 +90,11 @@
                     "quantity": 3
                 },
                 {
-                    "item_id": 6,
-                    "name": "Kakao",
-                    "brand": "Milka",
-                    "price": 100.0,
-                    "quantity": 5
-                },
-                {
                     "item_id": 5,
-                    "name": "Vaj",
-                    "brand": "Rama",
-                    "price": 100.0,
-                    "quantity": 1
+                    "name": "Sajt",
+                    "brand": "Mizo",
+                    "price": 102.0,
+                    "quantity": 4
                 }
             ]
         },
@@ -110,18 +108,11 @@
             "user_id": 10,
             "items": [
                 {
-                    "item_id": 0,
-                    "name": "Alma",
-                    "brand": "Jonatán",
-                    "price": 10.2,
-                    "quantity": 10
-                },
-                {
-                    "item_id": 0,
-                    "name": "Alma",
-                    "brand": "Jonatán",
-                    "price": 10.2,
-                    "quantity": 10
+                    "item_id": 55,
+                    "name": "Egyedul",
+                    "brand": "A raven",
+                    "price": 15.0,
+                    "quantity": 5
                 }
             ]
         },
@@ -146,6 +137,11 @@
         {
             "id": 107,
             "user_id": 67,
+            "items": []
+        },
+        {
+            "id": 108,
+            "user_id": 107,
             "items": []
         }
     ]
